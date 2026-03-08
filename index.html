@@ -1,0 +1,228 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozy Home Finds - My Favorites</title>
+    
+    <!-- Google Fonts matching the brand identity -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS library for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom colors and fonts configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FAF8F5',       /* Very light creamy background */
+                            primary: '#4A3F35',  /* Dark brown for primary text */
+                            secondary: '#8C7A6B', /* Light brown for secondary text */
+                            accent: '#D4A373',   /* Accent color (soft camel/orange) */
+                            card: '#F0E6DD',     /* Background color for buttons and cards */
+                            cardHover: '#E8D8CE' /* Card color on hover */
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['"Playfair Display"', 'serif'],
+                        body: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(74, 63, 53, 0.08)',
+                        'glow': '0 0 15px rgba(212, 163, 115, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            background-color: #FAF8F5; 
+            color: #4A3F35; 
+            /* Patterned background with very light dots for aesthetic look */
+            background-image: radial-gradient(#E8D8CE 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Button effects (Link Cards) */
+        .link-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(74, 63, 53, 0.12);
+            border-color: #D4A373;
+        }
+
+        /* Pulse effect for the main Storefront button */
+        @keyframes subtle-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 163, 115, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 163, 115, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 163, 115, 0); }
+        }
+        .btn-highlight {
+            animation: subtle-pulse 2s infinite;
+        }
+
+        /* Circular profile image */
+        .profile-img {
+            transition: transform 0.5s ease;
+        }
+        .profile-img:hover {
+            transform: scale(1.05) rotate(3deg);
+        }
+    </style>
+</head>
+<body class="font-body min-h-screen flex flex-col items-center py-10 px-4 sm:px-6 relative overflow-x-hidden">
+
+    <!-- Decorative background blurs -->
+    <div class="fixed top-[-10%] left-[-10%] w-72 h-72 bg-[#D4A373] rounded-full mix-blend-multiply filter blur-[100px] opacity-20 z-0 pointer-events-none"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-96 h-96 bg-[#8C7A6B] rounded-full mix-blend-multiply filter blur-[120px] opacity-15 z-0 pointer-events-none"></div>
+
+    <!-- Main content container -->
+    <main class="w-full max-w-lg z-10 relative flex flex-col items-center">
+        
+        <!-- ================= Header ================= -->
+        <header class="text-center mb-10 flex flex-col items-center w-full">
+            
+            <!-- Logo / Profile Picture -->
+            <!-- 💡 To change the image: Put your image link in place of src="..." -->
+            <div class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-brand-card border-4 border-white shadow-soft flex items-center justify-center mb-5 overflow-hidden profile-img relative">
+                 <!-- You can replace this SVG with a real image link like this: -->
+                 <!-- <img src="your_image_link_here.jpg" alt="Cozy Home Finds" class="w-full h-full object-cover"> -->
+                 
+                 <!-- Temporary logo (House and Sun) -->
+                 <svg viewBox="0 0 100 100" class="w-full h-full p-2" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="40" r="15" fill="#D4A373" opacity="0.8"/>
+                    <path d="M20 55 L 50 30 L 80 55 L 70 55 L 70 80 L 30 80 L 30 55 Z" fill="#4A3F35"/>
+                    <text x="50" y="72" font-family="serif" font-size="18" fill="#FAF8F5" text-anchor="middle" font-weight="bold">C</text>
+                </svg>
+            </div>
+            
+            <!-- Account name and description -->
+            <h1 class="font-heading text-3xl font-bold text-brand-primary mb-1 tracking-tight">Cozy Home Finds</h1>
+            <p class="text-brand-accent text-xs font-bold tracking-[0.2em] uppercase mb-4">Aesthetic Decor & Smart Gadgets</p>
+            <p class="text-brand-primary text-sm md:text-base text-center px-4 max-w-md leading-relaxed opacity-90">
+                Curating the most aesthetic and functional Amazon finds to elevate your everyday space. 🤎☁️
+            </p>
+        </header>
+
+        <!-- ================= Social Media Icons ================= -->
+        <!-- 💡 To activate links: Put your account link in place of href="#" -->
+        <div class="flex space-x-6 mb-10">
+            <!-- Pinterest -->
+            <a href="#" target="_blank" aria-label="Pinterest" class="text-brand-primary hover:text-brand-accent transition-colors duration-300 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.63 7.9 6.44 9.34-.09-.79-.17-2.01.04-2.87.18-.75 1.19-5.06 1.19-5.06s-.3-.6-.3-1.5c0-1.4.81-2.45 1.83-2.45.86 0 1.28.65 1.28 1.42 0 .86-.55 2.16-.83 3.36-.24 1.01.5 1.84 1.5 1.84 1.8 0 3.19-1.9 3.19-4.63 0-2.43-1.74-4.13-4.26-4.13-2.91 0-4.64 2.18-4.64 4.46 0 .88.34 1.82.76 2.33.08.1.09.19.07.29-.07.29-.22.91-.25 1.03-.04.16-.14.2-.31.12-1.15-.53-1.87-2.21-1.87-3.56 0-2.89 2.1-5.54 6.06-5.54 3.18 0 5.66 2.27 5.66 5.29 0 3.16-1.99 5.71-4.75 5.71-1.05 0-2.03-.55-2.37-1.19l-.65 2.46c-.23.9-.86 2.03-1.28 2.71A9.975 9.975 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+            </a>
+            <!-- TikTok -->
+            <a href="#" target="_blank" aria-label="TikTok" class="text-brand-primary hover:text-brand-accent transition-colors duration-300 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.39-3.16-3.8-5.46-.4-2.08-.04-4.26 1.03-6.06 1.41-2.43 4.14-3.9 6.94-3.86v4.06c-1.25-.05-2.5.42-3.38 1.3-.98.92-1.44 2.3-1.27 3.65.23 1.72 1.63 3.1 3.32 3.42 1.62.27 3.27-.41 4.19-1.8.49-.78.74-1.7.74-2.64V.02h-4.08z"/></svg>
+            </a>
+            <!-- Instagram -->
+            <a href="#" target="_blank" aria-label="Instagram" class="text-brand-primary hover:text-brand-accent transition-colors duration-300 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/></svg>
+            </a>
+            <!-- Email (Optional) -->
+            <a href="mailto:hello@cozyhomefinds.com" aria-label="Email" class="text-brand-primary hover:text-brand-accent transition-colors duration-300 transform hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </a>
+        </div>
+
+        <!-- ================= Links and Buttons List ================= -->
+        <div class="w-full space-y-4 flex flex-col items-center">
+            
+            <!-- Amazon Storefront Button -->
+            <!-- 💡 Put your Amazon Storefront link in place of # -->
+            <a href="#" class="link-card btn-highlight block w-full py-4 px-6 bg-brand-primary text-white rounded-2xl shadow-soft relative overflow-hidden group border border-transparent">
+                <span class="relative z-10 flex items-center justify-center gap-3 font-semibold tracking-wide text-[15px]">
+                    <svg class="w-5 h-5 text-brand-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    Shop My Amazon Storefront ✨
+                </span>
+                <!-- Shine effect on hover -->
+                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300 z-0"></div>
+            </a>
+
+            <!-- Elegant text divider -->
+            <div class="w-full flex items-center justify-center my-6">
+                <div class="h-px bg-brand-secondary opacity-30 w-1/4"></div>
+                <span class="mx-4 text-xs font-bold text-brand-secondary uppercase tracking-widest">Recent Finds</span>
+                <div class="h-px bg-brand-secondary opacity-30 w-1/4"></div>
+            </div>
+
+            <!-- ================= Individual Product Links ================= -->
+            
+            <!-- Product 1 (Example: Smart Lamp) -->
+            <!-- 💡 1. Put the Amazon link in place of # -->
+            <a href="#" class="link-card w-full flex items-center p-2.5 bg-brand-card hover:bg-brand-cardHover rounded-2xl shadow-sm border border-transparent">
+                <!-- 💡 2. Put the product image link in place of src="..." (preferably a square image from Amazon) -->
+                <div class="w-16 h-16 bg-white rounded-xl flex-shrink-0 overflow-hidden shadow-inner border border-white/50 relative">
+                    <!-- <img src="your_product_image_link.jpg" alt="Product" class="w-full h-full object-cover"> -->
+                    
+                    <!-- Image placeholder (remove it when you add the image) -->
+                    <div class="w-full h-full flex flex-col items-center justify-center text-brand-secondary opacity-50">
+                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    </div>
+                </div>
+                <!-- 💡 3. Change the product name and description here -->
+                <div class="ml-4 flex-grow pr-2">
+                    <p class="text-[15px] font-bold text-brand-primary leading-tight mb-1">Aesthetic Smart Desk Lamp</p>
+                    <p class="text-[12px] text-brand-secondary font-medium">Warm lighting for cozy workspace</p>
+                </div>
+                <!-- Arrow Icon -->
+                <div class="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center mr-2 text-brand-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+
+            <!-- Product 2 (Example: Kitchen Organizers) -->
+            <a href="#" class="link-card w-full flex items-center p-2.5 bg-brand-card hover:bg-brand-cardHover rounded-2xl shadow-sm border border-transparent">
+                <div class="w-16 h-16 bg-white rounded-xl flex-shrink-0 overflow-hidden shadow-inner border border-white/50 relative">
+                    <div class="w-full h-full flex flex-col items-center justify-center text-brand-secondary opacity-50">
+                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                </div>
+                <div class="ml-4 flex-grow pr-2">
+                    <p class="text-[15px] font-bold text-brand-primary leading-tight mb-1">Minimalist Spice Jars Set</p>
+                    <p class="text-[12px] text-brand-secondary font-medium">Kitchen organization must-have 🤍</p>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center mr-2 text-brand-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+
+            <!-- Product 3 (Example: Cable Management) -->
+            <a href="#" class="link-card w-full flex items-center p-2.5 bg-brand-card hover:bg-brand-cardHover rounded-2xl shadow-sm border border-transparent">
+                <div class="w-16 h-16 bg-white rounded-xl flex-shrink-0 overflow-hidden shadow-inner border border-white/50 relative">
+                    <div class="w-full h-full flex flex-col items-center justify-center text-brand-secondary opacity-50">
+                        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                </div>
+                <div class="ml-4 flex-grow pr-2">
+                    <p class="text-[15px] font-bold text-brand-primary leading-tight mb-1">Cable Management Box</p>
+                    <p class="text-[12px] text-brand-secondary font-medium">Hide messy wires instantly</p>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center mr-2 text-brand-primary">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+            </a>
+            
+        </div>
+
+        <!-- ================= Footer ================= -->
+        <footer class="mt-16 text-center w-full border-t border-brand-secondary/20 pt-6">
+            <p class="text-[11px] text-brand-secondary font-medium max-w-[280px] mx-auto leading-relaxed">
+                *As an Amazon Associate I earn from qualifying purchases at no extra cost to you. Thank you for supporting! 🤎
+            </p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
+
+
+                                                                               
