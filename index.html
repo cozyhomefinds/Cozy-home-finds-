@@ -1,163 +1,310 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cozy Home Finds | Aesthetic Decor & Smart Gadgets</title>
+    <title>Cozy Home Finds | Curated Aesthetic Living</title>
     
-    <!-- Tailwind CSS for styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Custom colors matching your logo -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        cozyBeige: '#f2ece4', /* Light comfortable background */
-                        cozyDark: '#1a1a1a',  /* Dark text color */
-                        cozyAccent: '#c86f43', /* The orange/rust dot from your logo */
+                        cozyBg: '#FBF9F6',      /* بيج فاتح دافئ */
+                        cozyDark: '#2C2A28',    /* أسود مريح */
+                        cozyAccent: '#B89F82',  /* برونزي هادئ */
+                        cozySoft: '#EBE5DE',    /* رمادي دافئ للحدود */
+                        cozyGold: '#D4AF37',    /* ذهبي للنجوم */
                     },
                     fontFamily: {
-                        serif: ['"Playfair Display"', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts & Phosphor Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f2ece4; color: #1a1a1a; }
-        .font-serif { font-family: 'Playfair Display', serif; }
-        /* Smooth hover animations */
-        .hover-scale { transition: transform 0.3s ease; }
-        .hover-scale:hover { transform: translateY(-5px); }
+        body { font-family: 'Montserrat', sans-serif; background-color: #FBF9F6; color: #2C2A28; scroll-behavior: smooth; overflow-x: hidden; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+        
+        /* Announcement Bar */
+        .announcement { background-color: #2C2A28; color: #FBF9F6; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; text-align: center; padding: 10px 0; font-weight: 500;}
+        
+        /* Navbar Blur */
+        .glass-nav { background: rgba(251, 249, 246, 0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(184, 159, 130, 0.15); transition: transform 0.3s ease; }
+        
+        /* Professional Motion */
+        .fade-up { animation: fadeUpAnim 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        @keyframes fadeUpAnim { to { opacity: 1; transform: translateY(0); } }
+
+        /* Affiliate Product Card */
+        .product-card { background: #FFFFFF; border: 1px solid #EBE5DE; border-radius: 4px; overflow: hidden; transition: all 0.4s ease; position: relative; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(44, 42, 40, 0.08); }
+        
+        .img-wrap { position: relative; aspect-ratio: 4/5; overflow: hidden; background: #F5F3F0; }
+        .img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+        .product-card:hover .img-wrap img { transform: scale(1.05); }
+
+        /* Card Badges */
+        .badge { position: absolute; top: 12px; left: 12px; background: #2C2A28; color: #FFF; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 8px; z-index: 10; }
+        
+        /* Card Action Icons (Share only for affiliates) */
+        .card-actions { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0; transform: translateX(10px); transition: all 0.3s ease; z-index: 10; }
+        .product-card:hover .card-actions { opacity: 1; transform: translateX(0); }
+        .action-btn { background: #FFF; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #2C2A28; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s ease; cursor: pointer; font-size: 16px; }
+        .action-btn:hover { background: #B89F82; color: #FFF; }
+        .action-btn.copied { background: #2C2A28; color: #FFF; }
+
+        /* Affiliate Link Overlay */
+        .buy-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); opacity: 0; transition: opacity 0.4s ease; }
+        .product-card:hover .buy-overlay { opacity: 1; }
+        .buy-btn { width: 100%; background: #FFF; color: #2C2A28; text-align: center; padding: 12px 0; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; transform: translateY(15px); transition: transform 0.4s ease; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .product-card:hover .buy-btn { transform: translateY(0); }
+        .buy-btn:hover { background: #2C2A28; color: #FFF; }
+
+        /* Card Info */
+        .card-info { padding: 20px; text-align: left; }
+        .stars { color: #D4AF37; font-size: 12px; margin-bottom: 8px; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #FBF9F6; }
+        ::-webkit-scrollbar-thumb { background: #B89F82; border-radius: 10px; }
+
+        .loader { border: 2px solid #EBE5DE; border-top: 2px solid #B89F82; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 40px auto; }
+        
+        .custom-input { border: 1px solid #EBE5DE; background: #FFF; padding: 12px 16px; width: 100%; font-size: 13px; outline: none; transition: border-color 0.3s ease; }
+        .custom-input:focus { border-color: #B89F82; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-cozyAccent selection:text-white">
 
-    <!-- Navigation Bar -->
-    <nav class="bg-cozyBeige py-6 px-4 shadow-sm border-b border-gray-200">
-        <div class="max-w-6xl mx-auto flex justify-between items-center flex-col md:flex-row gap-4">
-            <!-- Text Logo -->
-            <div class="text-center md:text-left">
-                <h1 class="font-serif text-3xl font-bold tracking-wide text-cozyDark">Cozy Home Finds</h1>
-                <p class="text-xs uppercase tracking-widest text-gray-500 mt-1">Aesthetic Decor & Smart Gadgets</p>
+    <!-- ========================================== -->
+    <!-- PUBLIC VIEW (واجهة العرض للجمهور - نسخة المسوق) -->
+    <!-- ========================================== -->
+    <div id="public-view" class="block">
+        
+        <!-- Announcement Bar for Affiliates -->
+        <div class="announcement">
+            <span class="inline-block animate-pulse mr-2">✦</span> Discover our daily curated home essentials from trusted global stores <span class="inline-block animate-pulse ml-2">✦</span>
+        </div>
+
+        <!-- Sleek Affiliate Navbar -->
+        <nav class="glass-nav sticky top-0 z-50 shadow-sm">
+            <div class="max-w-[1400px] mx-auto px-6 h-20 flex justify-between items-center">
+                
+                <!-- Left: Social Links -->
+                <div class="flex items-center gap-5 text-cozyDark">
+                    <a href="https://www.pinterest.com/Viora_Home_Finds/" target="_blank" class="text-xl hover:text-cozyAccent transition-colors"><i class="ph ph-pinterest-logo"></i></a>
+                    <a href="https://www.tiktok.com/@viorahomefinds" target="_blank" class="text-xl hover:text-cozyAccent transition-colors"><i class="ph ph-tiktok-logo"></i></a>
+                </div>
+
+                <!-- Center: Brand -->
+                <a href="#" class="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+                    <img src="https://i.ibb.co/LzfNq8B6/1000984276.jpg" alt="Logo" class="w-10 h-10 rounded-full border border-cozyAccent object-cover p-[2px]">
+                    <div class="flex flex-col items-center">
+                        <span class="font-serif text-xl md:text-2xl tracking-[0.15em] font-semibold text-cozyDark uppercase leading-none">Cozy Home</span>
+                        <span class="font-sans text-[8px] tracking-[0.4em] text-cozyAccent uppercase mt-1">Curated Finds</span>
+                    </div>
+                </a>
+
+                <!-- Right: Simple Newsletter Trigger -->
+                <div class="flex items-center text-cozyDark">
+                    <a href="#newsletter" class="hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold hover:text-cozyAccent transition-colors">
+                        <i class="ph ph-envelope-simple text-lg"></i> Join The Club
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="pt-24 pb-20 px-6 max-w-5xl mx-auto text-center">
+            <div class="fade-up">
+                <div class="inline-flex items-center gap-2 border border-cozySoft rounded-full px-4 py-1.5 mb-8 bg-white shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-[10px] uppercase tracking-widest font-semibold text-gray-500">Links Updated Daily</span>
+                </div>
+                
+                <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl text-cozyDark mb-6 leading-tight">
+                    Your guide to a <br> <span class="italic text-cozyAccent font-light">beautifully organized life.</span>
+                </h1>
+                
+                <p class="font-sans text-sm md:text-base text-gray-500 font-light max-w-2xl mx-auto leading-relaxed mb-10">
+                    We spend hours finding the best-rated, aesthetic home pieces on the internet so you don't have to. Click, shop, and transform your space.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#collection" class="bg-cozyDark text-white px-8 py-4 text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-cozyAccent transition-all shadow-md flex items-center justify-center gap-2">
+                        Explore Our Finds <i class="ph ph-arrow-down"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Value Proposition for Curators -->
+        <section class="border-y border-cozySoft bg-white py-12 mb-20">
+            <div class="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-cozySoft fade-up delay-1">
+                <div class="py-4 md:py-0 px-4">
+                    <i class="ph ph-magnifying-glass text-3xl text-cozyAccent mb-3"></i>
+                    <h4 class="font-serif text-xl font-semibold mb-2">We Search</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Scouring the internet for the highest quality aesthetic home goods.</p>
+                </div>
+                <div class="py-4 md:py-0 px-4">
+                    <i class="ph ph-star-four text-3xl text-cozyAccent mb-3"></i>
+                    <h4 class="font-serif text-xl font-semibold mb-2">We Review</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Checking reviews and ratings to ensure you only get the best.</p>
+                </div>
+                <div class="py-4 md:py-0 px-4">
+                    <i class="ph ph-link text-3xl text-cozyAccent mb-3"></i>
+                    <h4 class="font-serif text-xl font-semibold mb-2">You Shop</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Direct, safe links to trusted retailers like Amazon and more.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Collection Grid -->
+        <section id="collection" class="max-w-[1400px] mx-auto px-6 pb-24 fade-up delay-2">
+            
+            <div class="flex justify-between items-end mb-10 border-b border-cozySoft pb-4">
+                <h2 class="font-serif text-3xl italic text-cozyDark">The Master Link List</h2>
             </div>
             
-            <!-- Social Links & Button -->
-            <div class="flex gap-5 items-center">
-                <a href="https://www.pinterest.com/Viora_Home_Finds/" target="_blank" class="text-gray-600 hover:text-cozyAccent transition-colors duration-300">
-                    <i class="fab fa-pinterest text-2xl"></i>
-                </a>
-                <a href="#" class="text-gray-600 hover:text-cozyAccent transition-colors duration-300">
-                    <i class="fab fa-instagram text-2xl"></i>
-                </a>
-                <a href="#shop" class="bg-cozyDark text-cozyBeige px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-cozyAccent transition-colors duration-300 shadow-md">
-                    Shop My Finds
-                </a>
+            <div id="public-loader" class="loader"></div>
+
+            <div id="public-products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 hidden">
+                <!-- Products loaded via Firebase -->
             </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <header class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-        <div class="inline-block bg-white p-4 rounded-full shadow-md mb-6 hover-scale">
-            <!-- Icon inspired by your logo -->
-            <i class="fas fa-home text-4xl text-cozyDark relative">
-                <span class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-cozyAccent rounded-full"></span>
-            </i>
-        </div>
-        
-        <!-- Headline inspired by your Pinterest Bio -->
-        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-cozyDark mb-6 leading-tight">
-            A calmer, more organized space <br> <span class="italic text-cozyAccent">without overthinking it.</span>
-        </h2>
-        
-        <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Sharing simple home organization finds, practical storage ideas, and cozy decor to transform your everyday space into a peaceful retreat.
-        </p>
-        
-        <a href="#finds" class="inline-block border-2 border-cozyDark text-cozyDark px-8 py-3 rounded-full text-lg font-medium hover:bg-cozyDark hover:text-white transition-colors duration-300">
-            Browse Latest Finds <i class="fas fa-arrow-down ml-2 text-sm"></i>
-        </a>
-    </header>
-
-    <!-- Pinterest Categories / Finds Section -->
-    <section id="finds" class="bg-white py-16 rounded-t-3xl shadow-lg">
-        <div class="max-w-6xl mx-auto px-4">
-            <h3 class="font-serif text-3xl text-center mb-12 relative inline-block left-1/2 transform -translate-x-1/2">
-                My Pinterest Favorites
-                <span class="block w-1/2 h-1 bg-cozyAccent mx-auto mt-3"></span>
-            </h3>
-
-            <!-- Grid of Products -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <!-- Item 1 -->
-                <div class="bg-cozyBeige rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover-scale transition-all duration-300">
-                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cozy Lighting" class="w-full h-64 object-cover">
-                    <div class="p-6 text-center">
-                        <h4 class="font-serif text-xl font-bold mb-2">Warm Lighting</h4>
-                        <p class="text-gray-600 text-sm mb-4">Lamps and lighting that add a classic, cozy touch to your bedroom.</p>
-                        <!-- 💡 Put your Amazon link here inside href="#" -->
-                        <a href="#" class="text-cozyAccent font-bold hover:underline">Where to find?</a>
-                    </div>
-                </div>
-
-                <!-- Item 2 -->
-                <div class="bg-cozyBeige rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover-scale transition-all duration-300">
-                    <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Vintage Decor" class="w-full h-64 object-cover">
-                    <div class="p-6 text-center">
-                        <h4 class="font-serif text-xl font-bold mb-2">Vintage Touches</h4>
-                        <p class="text-gray-600 text-sm mb-4">Classic clocks and decor pieces that bring an elegant soul to your table.</p>
-                        <!-- 💡 Put your Amazon link here inside href="#" -->
-                        <a href="#" class="text-cozyAccent font-bold hover:underline">Where to find?</a>
-                    </div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="bg-cozyBeige rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover-scale transition-all duration-300">
-                    <img src="https://images.unsplash.com/photo-1620626011761-996317b8d101?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bathroom Organization" class="w-full h-64 object-cover">
-                    <div class="p-6 text-center">
-                        <h4 class="font-serif text-xl font-bold mb-2">Spa-like Bathroom</h4>
-                        <p class="text-gray-600 text-sm mb-4">Wooden shelves and smart organization ideas for a relaxing space.</p>
-                        <!-- 💡 Put your Amazon link here inside href="#" -->
-                        <a href="#" class="text-cozyAccent font-bold hover:underline">Where to find?</a>
-                    </div>
-                </div>
-
+            <div id="no-products-msg" class="text-center py-20 hidden">
+                <i class="ph ph-link-break text-4xl text-cozySoft mb-4"></i>
+                <p class="font-serif text-2xl italic text-gray-400">Updating links soon...</p>
             </div>
+        </section>
+
+        <!-- Affiliate Footer -->
+        <footer id="newsletter" class="bg-cozyDark text-white pt-20 pb-10 px-6 border-t-4 border-cozyAccent">
+            <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                <!-- Brand Info -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <img src="https://i.ibb.co/LzfNq8B6/1000984276.jpg" class="w-10 h-10 rounded-full border border-gray-600 grayscale">
+                        <span class="font-serif text-xl tracking-[0.1em] font-semibold uppercase">Cozy Home Finds</span>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-6 font-light max-w-sm">
+                        As an affiliate curator, we earn a small commission from qualifying purchases made through our links, at no extra cost to you. This helps support our page!
+                    </p>
+                </div>
+
+                <!-- Connect -->
+                <div>
+                    <h5 class="font-serif text-lg mb-4 text-cozyAccent italic">Connect With Us</h5>
+                    <div class="flex flex-col space-y-4">
+                        <a href="https://www.tiktok.com/@viorahomefinds" target="_blank" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
+                            <i class="ph ph-tiktok-logo text-xl"></i> TikTok Finds
+                        </a>
+                        <a href="https://www.pinterest.com/Viora_Home_Finds/" target="_blank" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
+                            <i class="ph ph-pinterest-logo text-xl"></i> Pinterest Inspiration
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div>
+                    <h5 class="font-serif text-lg mb-4 text-cozyAccent italic">The Cozy Newsletter</h5>
+                    <p class="text-xs text-gray-400 mb-4 font-light">Get our top 5 aesthetic finds delivered weekly.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email address" class="bg-transparent border-b border-gray-600 px-2 py-2 w-full text-xs outline-none focus:border-white transition-colors">
+                        <button class="border-b border-gray-600 hover:border-white px-3 text-xs uppercase tracking-widest text-cozyAccent hover:text-white transition-colors">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Footer (Modified for Affiliates) -->
+            <div class="max-w-[1400px] mx-auto border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
+                <p>&copy; 2026 Cozy Home Finds. Curator Edition.</p>
+                <div class="flex items-center gap-2">
+                    <i class="ph ph-shield-check text-lg text-cozyAccent"></i>
+                    <span>Partnered with trusted global retailers</span>
+                </div>
+                <a href="#admin" class="hover:text-white transition-colors border border-gray-800 px-3 py-1 rounded">Admin Dashboard</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- LOGIN VIEW (واجهة تسجيل الدخول للإدارة) -->
+    <!-- ========================================== -->
+    <div id="login-view" class="hidden min-h-screen flex items-center justify-center bg-cozyBg px-6">
+        <div class="bg-white p-10 rounded-lg shadow-sm border border-cozySoft w-full max-w-sm text-center">
+            <i class="ph ph-lock-key text-4xl text-cozyAccent mb-4"></i>
+            <h2 class="font-serif text-2xl mb-6 text-cozyDark">Curator Portal</h2>
+            <form id="login-form" class="space-y-4">
+                <input type="email" id="login-email" placeholder="Email" required class="custom-input text-center">
+                <input type="password" id="login-password" placeholder="Password" required class="custom-input text-center">
+                <button type="submit" class="w-full bg-cozyDark text-white py-3 text-[11px] uppercase tracking-widest font-semibold hover:bg-cozyAccent transition-colors mt-2">Access Dashboard</button>
+            </form>
+            <button onclick="window.location.hash=''" class="mt-6 text-[10px] uppercase tracking-widest text-gray-400 hover:text-cozyDark transition-colors">← Return to Gallery</button>
         </div>
-    </section>
+    </div>
 
-    <!-- Join / Newsletter Section -->
-    <section class="py-16 bg-cozyDark text-cozyBeige text-center px-4">
-        <div class="max-w-2xl mx-auto">
-            <h3 class="font-serif text-3xl mb-4">Don't miss the latest finds!</h3>
-            <p class="mb-8 text-gray-300">Follow my Pinterest for a daily dose of inspiration, practical storage ideas, and aesthetic home decor.</p>
-            <a href="https://www.pinterest.com/Viora_Home_Finds/" target="_blank" class="bg-cozyAccent text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-orange-600 hover-scale inline-block shadow-lg">
-                <i class="fab fa-pinterest mr-2 text-xl"></i> Follow me on Pinterest
-            </a>
-        </div>
-    </section>
+    <!-- ========================================== -->
+    <!-- ADMIN DASHBOARD (لوحة الإدارة - عربي) -->
+    <!-- ========================================== -->
+    <div id="admin-view" class="hidden min-h-screen bg-gray-50" dir="rtl">
+        
+        <header class="bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="bg-cozyDark text-white p-2 rounded"><i class="ph ph-link"></i></div>
+                <h1 class="font-serif text-xl font-bold text-cozyDark">إدارة روابط الأفيليت</h1>
+            </div>
+            <button id="logout-btn" class="flex items-center gap-2 text-xs font-bold text-red-500 hover:bg-red-50 px-3 py-2 rounded transition-colors"><i class="ph ph-sign-out text-lg"></i> تسجيل خروج</button>
+        </header>
 
-    <!-- Footer -->
-    <footer class="bg-cozyBeige py-8 text-center border-t border-gray-300">
-        <p class="text-gray-500 text-sm">
-            &copy; 2026 Cozy Home Finds. All rights reserved. <br>
-            <span class="text-xs mt-2 inline-block">Aesthetic Decor & Smart Gadgets</span>
-        </p>
-    </footer>
+        <main class="max-w-[1400px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- لوحة الإضافة -->
+            <div class="lg:col-span-4">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm sticky top-24">
+                    <h3 class="font-bold text-sm text-gray-500 uppercase tracking-wider mb-6 flex items-center gap-2"><i class="ph ph-plus-circle text-cozyAccent text-xl"></i> إضافة رابط جديد</h3>
+                    <form id="add-product-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">اسم المنتج</label>
+                            <input type="text" id="prod-title" required class="custom-input text-left" dir="ltr" placeholder="E.g. Aesthetic Cloud Sofa">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">وصف أو مميزات</label>
+                            <textarea id="prod-desc" required class="custom-input text-left resize-none h-20" dir="ltr" placeholder="Viral on TikTok, very comfortable..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">رابط الصورة (Image URL)</label>
+                            <input type="url" id="prod-image" required class="custom-input text-left" dir="ltr" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">رابط الأفيليت الخاص بك (Affiliate Link)</label>
+                            <input type="url" id="prod-link" required class="custom-input text-left" dir="ltr" placeholder="https://amzn.to/...">
+                        </div>
+                        <button type="submit" id="submit-prod-btn" class="w-full bg-cozyAccent text-white py-3 rounded text-sm font-bold hover:bg-cozyDark transition-colors mt-4 flex justify-center items-center gap-2">
+                            <i class="ph ph-upload-simple"></i> نشر الرابط
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-</body>
-</html>
-
-                                                                               
+            <!-- قائمة الروابط -->
+            <div class="lg:col-span-8">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-sm text-gray-500 uppercase tracking-wider mb-6 flex items-center gap-2"><i class="ph ph-list-dashes text-cozyAccent text-xl"></i> الروابط المنشورة</h3>
+                    <div id="admin-loader" class="loader hidden"></div>
+                    
+            
