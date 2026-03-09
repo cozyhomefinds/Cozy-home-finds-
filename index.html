@@ -59,7 +59,7 @@
         /* Card Badges */
         .badge { position: absolute; top: 12px; left: 12px; background: #2C2A28; color: #FFF; font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 8px; z-index: 10; }
         
-        /* Card Action Icons (Share only for affiliates) */
+        /* Card Action Icons */
         .card-actions { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; gap: 8px; opacity: 0; transform: translateX(10px); transition: all 0.3s ease; z-index: 10; }
         .product-card:hover .card-actions { opacity: 1; transform: translateX(0); }
         .action-btn { background: #FFF; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #2C2A28; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s ease; cursor: pointer; font-size: 16px; }
@@ -91,35 +91,29 @@
 <body class="antialiased selection:bg-cozyAccent selection:text-white">
 
     <!-- ========================================== -->
-    <!-- PUBLIC VIEW (واجهة العرض للجمهور - نسخة المسوق) -->
+    <!-- PUBLIC VIEW (واجهة العرض للجمهور) -->
     <!-- ========================================== -->
     <div id="public-view" class="block">
         
-        <!-- Announcement Bar for Affiliates -->
+        <!-- Announcement Bar -->
         <div class="announcement">
             <span class="inline-block animate-pulse mr-2">✦</span> Discover our daily curated home essentials from trusted global stores <span class="inline-block animate-pulse ml-2">✦</span>
         </div>
 
-        <!-- Sleek Affiliate Navbar -->
+        <!-- Sleek Navbar -->
         <nav class="glass-nav sticky top-0 z-50 shadow-sm">
             <div class="max-w-[1400px] mx-auto px-6 h-20 flex justify-between items-center">
-                
-                <!-- Left: Social Links -->
                 <div class="flex items-center gap-5 text-cozyDark">
-                    <a href="https://www.pinterest.com/Viora_Home_Finds/" target="_blank" class="text-xl hover:text-cozyAccent transition-colors"><i class="ph ph-pinterest-logo"></i></a>
-                    <a href="https://www.tiktok.com/@viorahomefinds" target="_blank" class="text-xl hover:text-cozyAccent transition-colors"><i class="ph ph-tiktok-logo"></i></a>
+                    <a href="#" class="text-xl hover:text-cozyAccent transition-colors"><i class="ph ph-pinterest-logo"></i></a>
+                    <a href="#" class="text-xl hover:text-cozyAccent transition-colors"><i class="ph ph-tiktok-logo"></i></a>
                 </div>
-
-                <!-- Center: Brand -->
                 <a href="#" class="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
-                    <img src="1000984276.jpg" alt="Logo" class="w-10 h-10 rounded-full border border-cozyAccent object-cover p-[2px]">
+                    <img src="https://i.ibb.co/LzfNq8B6/1000984276.jpg" alt="Logo" class="w-10 h-10 rounded-full border border-cozyAccent object-cover p-[2px]">
                     <div class="flex flex-col items-center">
                         <span class="font-serif text-xl md:text-2xl tracking-[0.15em] font-semibold text-cozyDark uppercase leading-none">Cozy Home</span>
                         <span class="font-sans text-[8px] tracking-[0.4em] text-cozyAccent uppercase mt-1">Curated Finds</span>
                     </div>
                 </a>
-
-                <!-- Right: Simple Newsletter Trigger -->
                 <div class="flex items-center text-cozyDark">
                     <a href="#newsletter" class="hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-widest font-semibold hover:text-cozyAccent transition-colors">
                         <i class="ph ph-envelope-simple text-lg"></i> Join The Club
@@ -135,15 +129,12 @@
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     <span class="text-[10px] uppercase tracking-widest font-semibold text-gray-500">Links Updated Daily</span>
                 </div>
-                
                 <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl text-cozyDark mb-6 leading-tight">
                     Your guide to a <br> <span class="italic text-cozyAccent font-light">beautifully organized life.</span>
                 </h1>
-                
                 <p class="font-sans text-sm md:text-base text-gray-500 font-light max-w-2xl mx-auto leading-relaxed mb-10">
                     We spend hours finding the best-rated, aesthetic home pieces on the internet so you don't have to. Click, shop, and transform your space.
                 </p>
-                
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#collection" class="bg-cozyDark text-white px-8 py-4 text-[11px] uppercase tracking-[0.2em] font-semibold hover:bg-cozyAccent transition-all shadow-md flex items-center justify-center gap-2">
                         Explore Our Finds <i class="ph ph-arrow-down"></i>
@@ -152,7 +143,7 @@
             </div>
         </header>
 
-        <!-- Value Proposition for Curators -->
+        <!-- Value Proposition -->
         <section class="border-y border-cozySoft bg-white py-12 mb-20">
             <div class="max-w-[1400px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-cozySoft fade-up delay-1">
                 <div class="py-4 md:py-0 px-4">
@@ -175,7 +166,6 @@
 
         <!-- Collection Grid -->
         <section id="collection" class="max-w-[1400px] mx-auto px-6 pb-24 fade-up delay-2">
-            
             <div class="flex justify-between items-end mb-10 border-b border-cozySoft pb-4">
                 <h2 class="font-serif text-3xl italic text-cozyDark">The Master Link List</h2>
             </div>
@@ -185,41 +175,31 @@
             <div id="public-products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 hidden">
                 <!-- Products loaded via Firebase -->
             </div>
-
-            <div id="no-products-msg" class="text-center py-20 hidden">
-                <i class="ph ph-link-break text-4xl text-cozySoft mb-4"></i>
-                <p class="font-serif text-2xl italic text-gray-400">Updating links soon...</p>
-            </div>
         </section>
 
-        <!-- Affiliate Footer -->
+        <!-- Footer -->
         <footer id="newsletter" class="bg-cozyDark text-white pt-20 pb-10 px-6 border-t-4 border-cozyAccent">
             <div class="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-                <!-- Brand Info -->
                 <div>
                     <div class="flex items-center gap-3 mb-6">
-                        <img src="1000984276.jpg" class="w-10 h-10 rounded-full border border-gray-600 grayscale">
+                        <img src="https://i.ibb.co/LzfNq8B6/1000984276.jpg" class="w-10 h-10 rounded-full border border-gray-600 grayscale">
                         <span class="font-serif text-xl tracking-[0.1em] font-semibold uppercase">Cozy Home Finds</span>
                     </div>
                     <p class="text-gray-400 text-xs leading-relaxed mb-6 font-light max-w-sm">
-                        As an affiliate curator, we earn a small commission from qualifying purchases made through our links, at no extra cost to you. This helps support our page!
+                        As an affiliate curator, we earn a small commission from qualifying purchases made through our links, at no extra cost to you.
                     </p>
                 </div>
-
-                <!-- Connect -->
                 <div>
                     <h5 class="font-serif text-lg mb-4 text-cozyAccent italic">Connect With Us</h5>
                     <div class="flex flex-col space-y-4">
-                        <a href="https://www.tiktok.com/@viorahomefinds" target="_blank" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
                             <i class="ph ph-tiktok-logo text-xl"></i> TikTok Finds
                         </a>
-                        <a href="https://www.pinterest.com/Viora_Home_Finds/" target="_blank" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
                             <i class="ph ph-pinterest-logo text-xl"></i> Pinterest Inspiration
                         </a>
                     </div>
                 </div>
-
-                <!-- Newsletter -->
                 <div>
                     <h5 class="font-serif text-lg mb-4 text-cozyAccent italic">The Cozy Newsletter</h5>
                     <p class="text-xs text-gray-400 mb-4 font-light">Get our top 5 aesthetic finds delivered weekly.</p>
@@ -229,10 +209,8 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Bottom Footer (Modified for Affiliates) -->
             <div class="max-w-[1400px] mx-auto border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-500 uppercase tracking-widest">
-                <p>&copy; 2026 Cozy Home Finds. Curator Edition.</p>
+                <p>© 2024 Cozy Home Finds.</p>
                 <div class="flex items-center gap-2">
                     <i class="ph ph-shield-check text-lg text-cozyAccent"></i>
                     <span>Partnered with trusted global retailers</span>
@@ -243,7 +221,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- LOGIN VIEW (واجهة تسجيل الدخول للإدارة) -->
+    <!-- LOGIN VIEW (واجهة تسجيل الدخول) -->
     <!-- ========================================== -->
     <div id="login-view" class="hidden min-h-screen flex items-center justify-center bg-cozyBg px-6">
         <div class="bg-white p-10 rounded-lg shadow-sm border border-cozySoft w-full max-w-sm text-center">
@@ -254,25 +232,27 @@
                 <input type="password" id="login-password" placeholder="Password" required class="custom-input text-center">
                 <button type="submit" class="w-full bg-cozyDark text-white py-3 text-[11px] uppercase tracking-widest font-semibold hover:bg-cozyAccent transition-colors mt-2">Access Dashboard</button>
             </form>
+            <p id="login-error" class="text-red-500 text-xs mt-4 hidden">بيانات الدخول غير صحيحة</p>
             <button onclick="window.location.hash=''" class="mt-6 text-[10px] uppercase tracking-widest text-gray-400 hover:text-cozyDark transition-colors">← Return to Gallery</button>
         </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- ADMIN DASHBOARD (لوحة الإدارة - عربي) -->
+    <!-- ADMIN DASHBOARD (لوحة الإدارة - أكملت الجزء الناقص) -->
     <!-- ========================================== -->
     <div id="admin-view" class="hidden min-h-screen bg-gray-50" dir="rtl">
-        
         <header class="bg-white border-b border-gray-200 py-4 px-6 flex justify-between items-center sticky top-0 z-50 shadow-sm">
             <div class="flex items-center gap-3">
                 <div class="bg-cozyDark text-white p-2 rounded"><i class="ph ph-link"></i></div>
                 <h1 class="font-serif text-xl font-bold text-cozyDark">إدارة روابط الأفيليت</h1>
             </div>
-            <button id="logout-btn" class="flex items-center gap-2 text-xs font-bold text-red-500 hover:bg-red-50 px-3 py-2 rounded transition-colors"><i class="ph ph-sign-out text-lg"></i> تسجيل خروج</button>
+            <div class="flex items-center gap-4">
+                <a href="#" onclick="window.location.hash=''" class="text-sm text-gray-500 hover:text-cozyDark underline">عرض الموقع</a>
+                <button id="logout-btn" class="flex items-center gap-2 text-xs font-bold text-red-500 hover:bg-red-50 px-3 py-2 rounded transition-colors border border-red-100"><i class="ph ph-sign-out text-lg"></i> تسجيل خروج</button>
+            </div>
         </header>
 
         <main class="max-w-[1400px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
             <!-- لوحة الإضافة -->
             <div class="lg:col-span-4">
                 <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm sticky top-24">
@@ -305,7 +285,21 @@
             <div class="lg:col-span-8">
                 <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
                     <h3 class="font-bold text-sm text-gray-500 uppercase tracking-wider mb-6 flex items-center gap-2"><i class="ph ph-list-dashes text-cozyAccent text-xl"></i> الروابط المنشورة</h3>
-                    <div id="admin-loader" class="loader hidden"></div>
                     
-                    <div class="overflow-x-auto">
-              
+                    <div id="admin-loader" class="loader"></div>
+                    
+                    <!-- هنا تم إكمال الجزء الناقص -->
+                    <div id="admin-products-list" class="space-y-4 hidden">
+                        <!-- المنتجات ستظهر هنا -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FIREBASE & JAVASCRIPT LOGIC -->
+    <!-- ========================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-a
