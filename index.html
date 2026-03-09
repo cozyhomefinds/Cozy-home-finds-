@@ -297,7 +297,7 @@
         </main>
     </div>
 
-    <!-- ========================================== -->
+<!-- ========================================== -->
     <!-- FIREBASE & JAVASCRIPT LOGIC -->
     <!-- ========================================== -->
     <script type="module">
@@ -305,7 +305,7 @@
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // ⚠️ ضعي مفتاحك الخاص مكان النجوم بالأسفل ⚠️
+        // ⚠️ ضعي مفاتيحك الخاصة هنا ⚠️
         const firebaseConfig = {
             apiKey: "AIzaSyD4qmB6hYGvjd2mEndo7xcWeITg2yfHhgM", 
             authDomain: "cozy-home-finds.firebaseapp.com",
@@ -319,10 +319,12 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // واجهات الموقع
         const publicView = document.getElementById('public-view');
         const loginView = document.getElementById('login-view');
         const adminView = document.getElementById('admin-view');
 
+        // نظام التنقل (Routing) بناءً على الرابط
         function handleRouting() {
             publicView.style.display = 'none';
             loginView.style.display = 'none';
@@ -332,7 +334,7 @@
                 if (auth.currentUser) {
                     adminView.style.display = 'block';
                 } else {
-                    loginView.style.display = 'flex';
+                    loginView.style.display = 'flex'; // لأن صفحة الدخول تستخدم flex
                 }
             } else {
                 publicView.style.display = 'block';
@@ -340,18 +342,27 @@
             window.scrollTo(0, 0);
         }
 
+        // الاستماع لتغير الرابط (Hash)
         window.addEventListener('hashchange', handleRouting);
-        onAuthStateChanged(auth, (user) => { handleRouting(); });
 
+        // الاستماع لحالة تسجيل الدخول
+        onAuthStateChanged(auth, (user) => {
+            handleRouting();
+        });
+
+        // تسجيل الدخول
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
             const errorMsg = document.getElementById('login-error');
             const btn = e.target.querySelector('button');
+            
             try {
                 btn.innerHTML = 'جاري الدخول...';
+                errorMsg.classList.add('hidden');
                 await signInWithEmailAndPassword(auth, email, password);
+                // بعد النجاح، الـ onAuthStateChanged سيقوم بفتح لوحة الإدارة تلقائياً
             } catch (error) {
                 errorMsg.classList.remove('hidden');
             } finally {
@@ -359,16 +370,23 @@
             }
         });
 
+        // تسجيل الخروج
         document.getElementById('logout-btn').addEventListener('click', async () => {
             await signOut(auth);
-            window.location.hash = '';
+            window.location.hash = ''; // العودة للصفحة الرئيسية
         });
 
+        // إضافة منتج جديد
         document.getElementById('add-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!auth.currentUser) return;
+
             const btn = document.getElementById('submit-prod-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph ph-spinner animate-spin"></i> جاري النشر...';
+
             try {
-                btn.disabled = true;
                 await addDoc(collection(db, "products"), {
                     title: document.getElementById('prod-title').value,
                     description: document.getElementById('prod-desc').value,
@@ -376,15 +394,24 @@
                     affiliateLink: document.getElementById('prod-link').value,
                     createdAt: new Date().getTime()
                 });
+                
                 e.target.reset();
-                alert("تم النشر بنجاح!");
+                btn.innerHTML = '<i class="ph ph-check"></i> تم النشر بنجاح';
+                btn.classList.replace('bg-cozyAccent', 'bg-green-600');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.replace('bg-green-600', 'bg-cozyAccent');
+                    btn.disabled = false;
+                }, 3000);
             } catch (error) {
-                alert("خطأ: " + error.message);
-            } finally {
+                alert("حدث خطأ أثناء الإضافة: " + error.message);
                 btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         });
 
+        // جلب وعرض المنتجات
         const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
         const publicContainer = document.getElementById('public-products-container');
         const adminList = document.getElementById('admin-products-list');
@@ -394,39 +421,80 @@
         onSnapshot(q, (snapshot) => {
             publicLoader.classList.add('hidden');
             adminLoader.classList.add('hidden');
+            
             publicContainer.innerHTML = '';
             adminList.innerHTML = '';
+
+            if(snapshot.empty) {
+                publicContainer.classList.add('hidden');
+                adminList.classList.remove('hidden');
+                adminList.innerHTML = '<p class="text-center text-gray-400 py-10">لم تقومي بإضافة أي روابط بعد.</p>';
+                return;
+            }
+
+            publicContainer.classList.remove('hidden');
+            adminList.classList.remove('hidden');
 
             snapshot.forEach((docSnap) => {
                 const product = docSnap.data();
                 const id = docSnap.id;
                 
+                // 1. كارت المنتج للجمهور (بالتصميم الاحترافي الذي اخترتِه)
                 publicContainer.innerHTML += `
                     <div class="product-card group">
                         <div class="badge">Top Find</div>
+                        <div class="card-actions">
+                            <div class="action-btn" onclick="navigator.clipboard.writeText('${product.affiliateLink}'); alert('تم نسخ الرابط!');" title="Copy Link"><i class="ph ph-link"></i></div>
+                        </div>
                         <div class="img-wrap">
-                            <img src="${product.imageUrl}" onerror="this.src='https://placehold.co/400x500'">
+                            <img src="${product.imageUrl}" onerror="this.src='https://placehold.co/400x500?text=No+Image'">
                             <div class="buy-overlay">
-                                <a href="${product.affiliateLink}" target="_blank" class="buy-btn">Shop Item</a>
+                                <a href="${product.affiliateLink}" target="_blank" class="buy-btn">
+                                    Shop Item <i class="ph ph-arrow-up-right text-sm"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="card-info">
-                            <h3 class="font-serif text-lg font-semibold mb-1">${product.title}</h3>
-                            <p class="text-xs text-gray-500">${product.description}</p>
+                            <div class="stars">★★★★★</div>
+                            <h3 class="font-serif text-lg font-semibold mb-1 text-cozyDark">${product.title}</h3>
+                            <p class="text-xs text-gray-500 line-clamp-2">${product.description}</p>
                         </div>
-                    </div>`;
+                    </div>
+                `;
 
-                adminList.innerHTML += `
-                    <div class="flex items-center gap-4 p-4 border rounded-lg mb-2">
-                        <img src="${product.imageUrl}" class="w-12 h-12 object-cover rounded">
-                        <div class="flex-1 text-sm font-bold">${product.title}</div>
-                        <button onclick="confirm('حذف؟') && window.deleteProd('${id}')" class="text-red-500">حذف</button>
-                    </div>`;
+                // 2. كارت المنتج في لوحة التحكم
+                const adminItem = document.createElement('div');
+                adminItem.className = 'flex items-center gap-4 p-4 border border-gray-100 rounded-lg bg-white shadow-sm hover:shadow transition';
+                adminItem.innerHTML = `
+                    <img src="${product.imageUrl}" class="w-16 h-16 object-cover rounded border border-gray-100" onerror="this.src='https://placehold.co/100'">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-gray-800 mb-1">${product.title}</h4>
+                        <a href="${product.affiliateLink}" target="_blank" class="text-xs text-blue-500 hover:underline flex items-center gap-1 w-fit" dir="ltr">
+                            <i class="ph ph-link"></i> رابط المنتج
+                        </a>
+                    </div>
+                    <button class="delete-btn text-red-500 hover:bg-red-50 p-3 rounded-full transition" data-id="${id}" title="حذف الرابط">
+                        <i class="ph ph-trash text-lg"></i>
+                    </button>
+                `;
+                adminList.appendChild(adminItem);
             });
-            publicContainer.classList.remove('hidden');
+
+            // تفعيل أزرار الحذف
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    if(confirm('هل أنتِ متأكدة من حذف هذا المنتج؟')) {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        await deleteDoc(doc(db, "products", id));
+                    }
+                });
+            });
+        }, (error) => {
+            publicLoader.innerHTML = '<p class="text-red-500 text-xs text-center">تأكدي من إضافة مفاتيح Firebase الصحيحة.</p>';
+            publicLoader.classList.remove('loader');
         });
 
-        window.deleteProd = async (id) => { await deleteDoc(doc(db, "products", id)); };
+        // بدء التهيئة
         handleRouting();
     </script>
 </body>
