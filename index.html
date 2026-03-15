@@ -202,7 +202,7 @@
                         <span class="font-serif text-xl tracking-[0.1em] font-semibold uppercase">Cozy Home Finds</span>
                     </div>
                     <p class="text-sm text-gray-400 font-light leading-relaxed max-w-sm">
-                        Curating the most beautiful, aesthetic, and functional home pieces. We spend hours finding the best-rated items on the internet so you don't have to. Transform your space into a cozy sanctuary.
+                        Curating the most beautiful, aesthetic, and functional home pieces. We spend hours finding the best-rated items on the internet so you don't have to.
                     </p>
                 </div>
                 <div>
@@ -373,7 +373,6 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        // ملاحظة: قمنا باستيراد increment لحساب النقرات بدقة
         import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -394,7 +393,7 @@
         let publicUnsubscribe = null;
         let adminUnsubscribe = null;
 
-        const withTimeout = (promise, ms = 5000) => {
+        const withTimeout = (promise, ms = 7000) => {
             return Promise.race([
                 promise,
                 new Promise((_, reject) => setTimeout(() => reject(new Error("FIREBASE_TIMEOUT")), ms))
@@ -468,7 +467,6 @@
             window.location.hash = '';
         });
 
-        // --- Load Public Data ---
         function loadPublicData() {
             const container = document.getElementById('public-products-container');
             const loader = document.getElementById('public-loader');
@@ -520,23 +518,18 @@
             }
         }
 
-        // --- دالة تتبع النقرات الجديدة ---
         window.trackAndGo = async (id, link) => {
-            // 1. فتح الرابط للمستخدم فوراً حتى لا يشعر بأي تأخير
             window.open(link, '_blank');
-            
-            // 2. تسجيل النقرة في قاعدة البيانات بالخلفية
             try {
                 const productRef = doc(db, "products", id);
                 await updateDoc(productRef, {
-                    clicks: increment(1) // يضيف 1 إلى عدد النقرات الحالي
+                    clicks: increment(1) 
                 });
             } catch (err) {
                 console.error("خطأ في تسجيل النقرة:", err);
             }
         };
 
-        // --- Admin Data & Actions ---
         function loadAdminData() {
             const list = document.getElementById('admin-products-list');
             const loader = document.getElementById('admin-loader');
@@ -558,7 +551,6 @@
                 productsData[p.id] = p;
                 const starCount = p.stars || 5;
                 const starsHtml = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
-                // جلب عدد النقرات (إذا كان المنتج قديم ولا يملك نقرات، اجعله 0)
                 const clickCount = p.clicks || 0;
 
                 list.innerHTML += `
@@ -567,7 +559,6 @@
                         <div class="flex-1" dir="ltr">
                             <h4 class="font-bold text-gray-800 text-sm truncate">${p.title}</h4>
                             <p class="text-[10px] text-cozyGold mt-1 font-bold">${starsHtml}</p>
-                            <!-- عرض عدد النقرات للأدمن -->
                             <div class="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">
                                 <i class="ph ph-cursor-click text-cozyAccent"></i> النقرات: ${clickCount}
                             </div>
@@ -596,18 +587,20 @@
                     imageUrl: document.getElementById('add-image').value,
                     affiliateLink: document.getElementById('add-link').value,
                     stars: parseInt(document.getElementById('add-stars').value),
-                    clicks: 0, // تعيين عدد النقرات لصفر عند إضافة منتج جديد
+                    clicks: 0, 
                     createdAt: serverTimestamp()
                 }));
                 
                 document.getElementById('add-product-form').reset();
                 window.showMessage("تم النشر بنجاح!", "تم إضافة المنتج بنجاح وسيظهر للجميع دائماً.");
             } catch (err) {
-                console.error("خطأ:", err);
-                if (err.message === "FIREBASE_TIMEOUT" || err.code === "permission-denied") {
+                console.error("خطأ مفصل من فايربيس:", err);
+                
+                // هنا التحديث: رسالة مخصصة تشرح المشكلة بالضبط!
+                if (err.message === "FIREBASE_TIMEOUT" || err.code === "permission-denied" || err.message.includes("Missing or insufficient permissions")) {
                     window.showMessage(
-                        "مشكلة في قواعد Firebase ⚠️", 
-                        "يرجى التأكد من مسح كل الكود الموجود في تبويب Rules في فايربيس ولصق الكود الجديد فقط.", 
+                        "السيرفر يرفض الحفظ! ⚠️", 
+                        "الزر برمجياً يعمل 100%، لكن موقع Firebase يرفض استلام البيانات!\n\nلحل هذا:\n1. اذهبي لفايربيس (قسم Rules).\n2. تأكدي أنك نسختي الكود كاملاً.\n3. والأهم: اضغطي على زر (Publish) الأزرق لكي يتم تفعيل التعديل.", 
                         true
                     );
                 } else {
@@ -696,7 +689,6 @@
             });
         };
 
-        // --- Newsletter Subscription ---
         document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const emailInput = document.getElementById('newsletter-email');
@@ -719,7 +711,6 @@
             btn.innerHTML = 'Subscribe';
         });
 
-        // Initialize
         handleRouting();
     </script>
 </body>
