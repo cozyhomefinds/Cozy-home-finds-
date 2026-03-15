@@ -373,7 +373,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, serverTimestamp, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // ملاحظة: قمنا باستيراد increment لحساب النقرات بدقة
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD4qmB6hYGvjd2mEndo7xcWeITg2yfHhgM", 
@@ -390,11 +391,9 @@
         let productsData = {};
         let deleteTargetId = null;
         
-        // منع تراكم مستمعي البيانات
         let publicUnsubscribe = null;
         let adminUnsubscribe = null;
 
-        // دالة لحل مشكلة التعليق اللانهائي إذا لم يستجب فايربيس
         const withTimeout = (promise, ms = 5000) => {
             return Promise.race([
                 promise,
@@ -521,8 +520,20 @@
             }
         }
 
-        window.trackAndGo = (id, link) => {
+        // --- دالة تتبع النقرات الجديدة ---
+        window.trackAndGo = async (id, link) => {
+            // 1. فتح الرابط للمستخدم فوراً حتى لا يشعر بأي تأخير
             window.open(link, '_blank');
+            
+            // 2. تسجيل النقرة في قاعدة البيانات بالخلفية
+            try {
+                const productRef = doc(db, "products", id);
+                await updateDoc(productRef, {
+                    clicks: increment(1) // يضيف 1 إلى عدد النقرات الحالي
+                });
+            } catch (err) {
+                console.error("خطأ في تسجيل النقرة:", err);
+            }
         };
 
         // --- Admin Data & Actions ---
@@ -547,6 +558,8 @@
                 productsData[p.id] = p;
                 const starCount = p.stars || 5;
                 const starsHtml = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+                // جلب عدد النقرات (إذا كان المنتج قديم ولا يملك نقرات، اجعله 0)
+                const clickCount = p.clicks || 0;
 
                 list.innerHTML += `
                     <div class="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:bg-gray-50 bg-white">
@@ -554,6 +567,10 @@
                         <div class="flex-1" dir="ltr">
                             <h4 class="font-bold text-gray-800 text-sm truncate">${p.title}</h4>
                             <p class="text-[10px] text-cozyGold mt-1 font-bold">${starsHtml}</p>
+                            <!-- عرض عدد النقرات للأدمن -->
+                            <div class="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                <i class="ph ph-cursor-click text-cozyAccent"></i> النقرات: ${clickCount}
+                            </div>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="window.copyDirectLink('${p.id}')" class="p-2 text-gray-500 hover:text-gray-800"><i class="ph ph-link text-lg"></i></button>
@@ -573,13 +590,13 @@
             btn.innerHTML = 'جاري النشر... (يرجى الانتظار)';
             
             try {
-                // إرسال البيانات مع مهلة 5 ثواني
                 await withTimeout(addDoc(collection(db, "products"), {
                     title: document.getElementById('add-title').value,
                     description: document.getElementById('add-desc').value,
                     imageUrl: document.getElementById('add-image').value,
                     affiliateLink: document.getElementById('add-link').value,
                     stars: parseInt(document.getElementById('add-stars').value),
+                    clicks: 0, // تعيين عدد النقرات لصفر عند إضافة منتج جديد
                     createdAt: serverTimestamp()
                 }));
                 
@@ -590,14 +607,13 @@
                 if (err.message === "FIREBASE_TIMEOUT" || err.code === "permission-denied") {
                     window.showMessage(
                         "مشكلة في قواعد Firebase ⚠️", 
-                        "المنتج يظهر مؤقتاً لكن لا يُحفظ في السيرفر!\n\nيجب الذهاب إلى موقع Firebase\nثم فتح (Firestore Database)\nثم فتح تبويب (Rules)\nثم تعديل السطر ليكون:\nallow read, write: if true;", 
+                        "يرجى التأكد من مسح كل الكود الموجود في تبويب Rules في فايربيس ولصق الكود الجديد فقط.", 
                         true
                     );
                 } else {
                     window.showMessage("حدث خطأ غير متوقع", err.message, true);
                 }
             } finally {
-                // إعادة الزر لشكله الطبيعي في جميع الحالات
                 btn.disabled = false;
                 btn.innerHTML = '<i class="ph ph-upload-simple text-lg"></i> نشر المنتج';
             }
@@ -658,7 +674,7 @@
                     closeDeleteModal();
                 } catch (err) {
                     closeDeleteModal();
-                    window.showMessage("فشل الحذف", "يرجى تعديل قواعد Rules في فايربيس أولاً لكي يسمح لك بحذف البيانات.", true);
+                    window.showMessage("فشل الحذف", "يرجى تعديل قواعد Rules في فايربيس أولاً.", true);
                 }
             }
             btn.disabled = false;
@@ -668,7 +684,7 @@
         window.copyDirectLink = (id) => {
             const productUrl = window.location.origin + window.location.pathname + `?p=${id}`;
             navigator.clipboard.writeText(productUrl).then(() => {
-                window.showMessage("تم نسخ الرابط!", "يمكنك وضع هذا الرابط في بنترست الآن.");
+                window.showMessage("تم نسخ الرابط!", "يمكنك وضع هذا الرابط في بنترست الآن وسيتم توجيه الزائر وتظليل المنتج.");
             }).catch(err => {
                 const input = document.createElement('input');
                 input.value = productUrl;
