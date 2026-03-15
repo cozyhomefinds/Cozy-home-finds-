@@ -171,6 +171,9 @@
             </div>
             
             <div id="public-loader" class="loader"></div>
+            <!-- مكان عرض رسائل الخطأ لو حدثت -->
+            <div id="error-message" class="hidden text-center p-4 bg-red-50 text-red-600 rounded-lg mb-8 text-sm font-bold border border-red-200"></div>
+            
             <div id="public-products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 hidden">
                 <!-- Products loaded via Firebase -->
             </div>
@@ -309,6 +312,9 @@
                     </div>
                     
                     <div id="admin-loader" class="loader"></div>
+                    <!-- لعرض الأخطاء في صفحة الأدمن -->
+                    <div id="admin-error-message" class="hidden text-center p-4 bg-red-50 text-red-600 rounded-lg mb-4 text-sm font-bold border border-red-200"></div>
+
                     <div id="admin-products-list" class="space-y-4 hidden">
                         <!-- Admin products injected here -->
                     </div>
@@ -467,10 +473,18 @@
             window.location.hash = '';
         });
 
+        // دالة ترتيب سحرية ومحمية تماماً من الأخطاء
         function sortProductsSafely(productsArray) {
             return productsArray.sort((a, b) => {
-                const timeA = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : Date.now()) : Date.now();
-                const timeB = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : Date.now()) : Date.now();
+                let timeA = 0, timeB = 0;
+                
+                if (a.createdAt) {
+                    timeA = a.createdAt.seconds || (typeof a.createdAt.toMillis === 'function' ? a.createdAt.toMillis() : Date.now());
+                }
+                if (b.createdAt) {
+                    timeB = b.createdAt.seconds || (typeof b.createdAt.toMillis === 'function' ? b.createdAt.toMillis() : Date.now());
+                }
+                
                 return timeB - timeA; // الأحدث أولاً
             });
         }
@@ -478,29 +492,49 @@
         function loadPublicData() {
             const container = document.getElementById('public-products-container');
             const loader = document.getElementById('public-loader');
+            const errorMsg = document.getElementById('error-message');
+            
             const urlParams = new URLSearchParams(window.location.search);
             const targetProductId = urlParams.get('p');
 
-            // التعديل السحري هنا: طلب المنتجات بدون شرط الترتيب من السيرفر
-            const q = collection(db, "products");
-            publicUnsubscribe = onSnapshot(q, (snapshot) => {
-                let loadedData = [];
-                snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
-                
-                // ترتيب المنتجات يدوياً في الموقع لتجنب مشاكل فايربيس
-                loadedData = sortProductsSafely(loadedData);
+            errorMsg.classList.add('hidden');
+            loader.classList.remove('hidden');
+            container.classList.add('hidden');
 
-                renderPublicProducts(loadedData, targetProductId);
+            try {
+                const q = collection(db, "products");
+                publicUnsubscribe = onSnapshot(q, (snapshot) => {
+                    let loadedData = [];
+                    snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
+                    
+                    loadedData = sortProductsSafely(loadedData);
+
+                    renderPublicProducts(loadedData, targetProductId);
+                    loader.classList.add('hidden');
+                    container.classList.remove('hidden');
+                }, (error) => {
+                    console.error("Firebase Error: ", error);
+                    errorMsg.innerText = "حدث خطأ في جلب البيانات من فايربيس: " + error.message;
+                    errorMsg.classList.remove('hidden');
+                    loader.classList.add('hidden');
+                });
+            } catch (err) {
+                console.error("Code Error: ", err);
+                errorMsg.innerText = "حدث خطأ في كود المتصفح: " + err.message;
+                errorMsg.classList.remove('hidden');
                 loader.classList.add('hidden');
-                container.classList.remove('hidden');
-            }, (error) => {
-                console.error("Firebase Error: ", error);
-            });
+            }
         }
 
         function renderPublicProducts(dataArray, targetProductId) {
             const container = document.getElementById('public-products-container');
             container.innerHTML = '';
+            
+            if (dataArray.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-gray-400 font-serif text-xl italic">لا توجد منتجات حتى الآن...</div>';
+                return;
+            }
+
             dataArray.forEach((product) => {
                 const isTarget = targetProductId === product.id;
                 const starCount = product.stars || 5;
@@ -546,26 +580,48 @@
         function loadAdminData() {
             const list = document.getElementById('admin-products-list');
             const loader = document.getElementById('admin-loader');
+            const errorMsg = document.getElementById('admin-error-message');
             
-            // التعديل السحري هنا للمسؤول أيضاً
-            const q = collection(db, "products");
-            adminUnsubscribe = onSnapshot(q, (snapshot) => {
-                let loadedData = [];
-                snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
-                
-                // الترتيب يدوياً
-                loadedData = sortProductsSafely(loadedData);
+            errorMsg.classList.add('hidden');
+            loader.classList.remove('hidden');
+            list.classList.add('hidden');
 
-                renderAdminProducts(loadedData);
+            try {
+                const q = collection(db, "products");
+                adminUnsubscribe = onSnapshot(q, (snapshot) => {
+                    let loadedData = [];
+                    snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
+                    
+                    loadedData = sortProductsSafely(loadedData);
+
+                    renderAdminProducts(loadedData);
+                    loader.classList.add('hidden');
+                    list.classList.remove('hidden');
+                }, (error) => {
+                    console.error("Admin Firebase Error: ", error);
+                    errorMsg.innerText = "حدث خطأ في فايربيس: " + error.message;
+                    errorMsg.classList.remove('hidden');
+                    loader.classList.add('hidden');
+                });
+            } catch (err) {
+                console.error("Admin Code Error: ", err);
+                errorMsg.innerText = "خطأ برمجي: " + err.message;
+                errorMsg.classList.remove('hidden');
                 loader.classList.add('hidden');
-                list.classList.remove('hidden');
-            });
+            }
         }
 
         function renderAdminProducts(dataArray) {
             const list = document.getElementById('admin-products-list');
             list.innerHTML = '';
             productsData = {};
+            
+            if (dataArray.length === 0) {
+                list.innerHTML = '<div class="text-center py-10 text-gray-400 text-sm">لم تقومي بإضافة أي منتج بعد...</div>';
+                document.getElementById('total-count').innerText = `0 منتجات`;
+                return;
+            }
+
             dataArray.forEach((p) => {
                 productsData[p.id] = p;
                 const starCount = p.stars || 5;
@@ -614,7 +670,7 @@
                 window.showMessage("تم النشر بنجاح!", "تم إضافة المنتج وسيظهر في الموقع فوراً.");
             } catch (err) {
                 console.error("Firebase Error:", err);
-                window.showMessage("تنبيه", "تم إرسال الطلب للسيرفر! إذا لم يظهر المنتج في القائمة، قومي بتحديث الصفحة فقط.", false);
+                window.showMessage("تنبيه", "تم إرسال الطلب، إذا لم يظهر، قد يكون هناك ضعف في الاتصال.", false);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="ph ph-upload-simple text-lg"></i> نشر المنتج';
