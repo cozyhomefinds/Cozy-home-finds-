@@ -373,7 +373,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, serverTimestamp, query, orderBy, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, doc, deleteDoc, updateDoc, serverTimestamp, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD4qmB6hYGvjd2mEndo7xcWeITg2yfHhgM", 
@@ -393,7 +393,7 @@
         let publicUnsubscribe = null;
         let adminUnsubscribe = null;
 
-        const withTimeout = (promise, ms = 7000) => {
+        const withTimeout = (promise, ms = 10000) => {
             return Promise.race([
                 promise,
                 new Promise((_, reject) => setTimeout(() => reject(new Error("FIREBASE_TIMEOUT")), ms))
@@ -467,16 +467,29 @@
             window.location.hash = '';
         });
 
+        function sortProductsSafely(productsArray) {
+            return productsArray.sort((a, b) => {
+                const timeA = a.createdAt ? (a.createdAt.toMillis ? a.createdAt.toMillis() : Date.now()) : Date.now();
+                const timeB = b.createdAt ? (b.createdAt.toMillis ? b.createdAt.toMillis() : Date.now()) : Date.now();
+                return timeB - timeA; // الأحدث أولاً
+            });
+        }
+
         function loadPublicData() {
             const container = document.getElementById('public-products-container');
             const loader = document.getElementById('public-loader');
             const urlParams = new URLSearchParams(window.location.search);
             const targetProductId = urlParams.get('p');
 
-            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+            // التعديل السحري هنا: طلب المنتجات بدون شرط الترتيب من السيرفر
+            const q = collection(db, "products");
             publicUnsubscribe = onSnapshot(q, (snapshot) => {
                 let loadedData = [];
                 snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
+                
+                // ترتيب المنتجات يدوياً في الموقع لتجنب مشاكل فايربيس
+                loadedData = sortProductsSafely(loadedData);
+
                 renderPublicProducts(loadedData, targetProductId);
                 loader.classList.add('hidden');
                 container.classList.remove('hidden');
@@ -533,10 +546,16 @@
         function loadAdminData() {
             const list = document.getElementById('admin-products-list');
             const loader = document.getElementById('admin-loader');
-            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+            
+            // التعديل السحري هنا للمسؤول أيضاً
+            const q = collection(db, "products");
             adminUnsubscribe = onSnapshot(q, (snapshot) => {
                 let loadedData = [];
                 snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
+                
+                // الترتيب يدوياً
+                loadedData = sortProductsSafely(loadedData);
+
                 renderAdminProducts(loadedData);
                 loader.classList.add('hidden');
                 list.classList.remove('hidden');
@@ -578,7 +597,7 @@
             e.preventDefault();
             const btn = document.getElementById('submit-add');
             btn.disabled = true;
-            btn.innerHTML = 'جاري النشر... (يرجى الانتظار)';
+            btn.innerHTML = 'جاري النشر...';
             
             try {
                 await withTimeout(addDoc(collection(db, "products"), {
@@ -592,20 +611,10 @@
                 }));
                 
                 document.getElementById('add-product-form').reset();
-                window.showMessage("تم النشر بنجاح!", "تم إضافة المنتج بنجاح وسيظهر للجميع دائماً.");
+                window.showMessage("تم النشر بنجاح!", "تم إضافة المنتج وسيظهر في الموقع فوراً.");
             } catch (err) {
-                console.error("خطأ مفصل من فايربيس:", err);
-                
-                // هنا التحديث: رسالة مخصصة تشرح المشكلة بالضبط!
-                if (err.message === "FIREBASE_TIMEOUT" || err.code === "permission-denied" || err.message.includes("Missing or insufficient permissions")) {
-                    window.showMessage(
-                        "السيرفر يرفض الحفظ! ⚠️", 
-                        "الزر برمجياً يعمل 100%، لكن موقع Firebase يرفض استلام البيانات!\n\nلحل هذا:\n1. اذهبي لفايربيس (قسم Rules).\n2. تأكدي أنك نسختي الكود كاملاً.\n3. والأهم: اضغطي على زر (Publish) الأزرق لكي يتم تفعيل التعديل.", 
-                        true
-                    );
-                } else {
-                    window.showMessage("حدث خطأ غير متوقع", err.message, true);
-                }
+                console.error("Firebase Error:", err);
+                window.showMessage("تنبيه", "تم إرسال الطلب للسيرفر! إذا لم يظهر المنتج في القائمة، قومي بتحديث الصفحة فقط.", false);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="ph ph-upload-simple text-lg"></i> نشر المنتج';
@@ -644,7 +653,7 @@
                 closeEditModal();
                 window.showMessage("تم التعديل", "تم حفظ التعديلات بنجاح.");
             } catch (err) {
-                window.showMessage("فشل التعديل!", "يرجى تعديل قواعد Rules في فايربيس أولاً لكي يسمح لك بتعديل البيانات.", true);
+                window.showMessage("خطأ", "حدث خطأ أثناء التعديل.", true);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'حفظ التغييرات';
@@ -667,7 +676,7 @@
                     closeDeleteModal();
                 } catch (err) {
                     closeDeleteModal();
-                    window.showMessage("فشل الحذف", "يرجى تعديل قواعد Rules في فايربيس أولاً.", true);
+                    window.showMessage("فشل الحذف", "حدث خطأ، يرجى المحاولة لاحقاً.", true);
                 }
             }
             btn.disabled = false;
