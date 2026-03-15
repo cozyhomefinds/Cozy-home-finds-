@@ -91,7 +91,7 @@
         .shop-btn:hover { background: #B89F82; color: #FFF; box-shadow: 0 4px 15px rgba(184, 159, 130, 0.3); }
 
         .card-info { padding: 20px; text-align: left; display: flex; flex-direction: column; flex-grow: 1; }
-        .stars { color: #D4AF37; font-size: 11px; margin-bottom: 10px; display: flex; gap: 2px; }
+        .stars { color: #D4AF37; font-size: 11px; margin-bottom: 8px; letter-spacing: 2px;}
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #FBF9F6; }
@@ -106,12 +106,6 @@
         #edit-modal, #delete-modal, #message-modal { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         .highlight-product { animation: highlightAnim 2s ease-out; box-shadow: 0 0 0 2px #B89F82; }
         @keyframes highlightAnim { 0% { transform: scale(1.05); box-shadow: 0 0 20px rgba(184, 159, 130, 0.6); } 100% { transform: scale(1); } }
-        
-        /* Star Selection Style */
-        .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; }
-        .star-rating input { display: none; }
-        .star-rating label { cursor: pointer; color: #EBE5DE; font-size: 24px; transition: color 0.2s; }
-        .star-rating label:hover, .star-rating label:hover ~ label, .star-rating input:checked ~ label { color: #D4AF37; }
     </style>
 </head>
 <body class="antialiased selection:bg-cozyAccent selection:text-white relative">
@@ -207,6 +201,10 @@
                         </svg>
                         <span class="font-serif text-xl tracking-[0.1em] font-semibold uppercase">Cozy Home Finds</span>
                     </div>
+                    <!-- تمت إعادة الوصف الجميل هنا 👇 -->
+                    <p class="text-sm text-gray-400 font-light leading-relaxed max-w-sm">
+                        Curating the most beautiful, aesthetic, and functional home pieces. We spend hours finding the best-rated items on the internet so you don't have to. Transform your space into a cozy sanctuary.
+                    </p>
                 </div>
                 <div>
                     <h5 class="font-serif text-lg mb-4 text-cozyAccent italic">Connect With Us</h5>
@@ -280,14 +278,14 @@
                             <textarea id="add-desc" required class="custom-input text-left resize-none h-20" dir="ltr"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-500 mb-1">عدد النجوم (التقييم)</label>
-                            <div class="star-rating" id="star-selector">
-                                <input type="radio" id="star5" name="rating" value="5" checked><label for="star5">★</label>
-                                <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
-                                <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
-                                <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
-                                <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
-                            </div>
+                            <label class="block text-xs text-gray-500 mb-1">التقييم (عدد النجوم)</label>
+                            <select id="add-stars" class="custom-input text-left font-bold" dir="ltr">
+                                <option value="5">★★★★★ (5 نجوم)</option>
+                                <option value="4">★★★★☆ (4 نجوم)</option>
+                                <option value="3">★★★☆☆ (3 نجوم)</option>
+                                <option value="2">★★☆☆☆ (نجمتين)</option>
+                                <option value="1">★☆☆☆☆ (نجمة واحدة)</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-xs text-gray-500 mb-1">رابط الصورة (Image URL)</label>
@@ -332,22 +330,32 @@
                 <div><label class="block text-xs text-gray-500 mb-1">الاسم</label><input type="text" id="edit-title" required class="custom-input text-left" dir="ltr"></div>
                 <div><label class="block text-xs text-gray-500 mb-1">الوصف</label><textarea id="edit-desc" required class="custom-input text-left resize-none h-20" dir="ltr"></textarea></div>
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">التقييم</label>
-                    <div class="star-rating" id="edit-star-selector">
-                        <input type="radio" id="edit-star5" name="edit-rating" value="5"><label for="edit-star5">★</label>
-                        <input type="radio" id="edit-star4" name="edit-rating" value="4"><label for="edit-star4">★</label>
-                        <input type="radio" id="edit-star3" name="edit-rating" value="3"><label for="edit-star3">★</label>
-                        <input type="radio" id="edit-star2" name="edit-rating" value="2"><label for="edit-star2">★</label>
-                        <input type="radio" id="edit-star1" name="edit-rating" value="1"><label for="edit-star1">★</label>
-                    </div>
+                    <label class="block text-xs text-gray-500 mb-1">التقييم (عدد النجوم)</label>
+                    <select id="edit-stars" class="custom-input text-left font-bold" dir="ltr">
+                        <option value="5">★★★★★ (5 نجوم)</option>
+                        <option value="4">★★★★☆ (4 نجوم)</option>
+                        <option value="3">★★★☆☆ (3 نجوم)</option>
+                        <option value="2">★★☆☆☆ (نجمتين)</option>
+                        <option value="1">★☆☆☆☆ (نجمة واحدة)</option>
+                    </select>
                 </div>
                 <div><label class="block text-xs text-gray-500 mb-1">رابط الصورة</label><input type="url" id="edit-image" required class="custom-input text-left" dir="ltr"></div>
                 <div><label class="block text-xs text-gray-500 mb-1">رابط الشراء</label><input type="url" id="edit-link" required class="custom-input text-left" dir="ltr"></div>
                 <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 bg-cozyAccent text-white py-2 rounded font-bold hover:bg-cozyDark transition-colors">حفظ التغييرات</button>
+                    <button type="submit" id="submit-edit" class="flex-1 bg-cozyAccent text-white py-2 rounded font-bold hover:bg-cozyDark transition-colors">حفظ التغييرات</button>
                     <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded font-bold hover:bg-gray-200 transition-colors">إلغاء</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Message Modal (Alerts) -->
+    <div id="message-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 border border-gray-200">
+            <i id="message-icon" class="ph ph-info text-4xl text-cozyAccent mb-4 block"></i>
+            <h3 class="font-bold text-lg mb-2 text-gray-800" id="message-title">تنبيه</h3>
+            <p class="text-sm text-gray-500 mb-6" id="message-text"></p>
+            <button onclick="closeMessageModal()" class="w-full bg-cozyDark text-white py-2 rounded font-bold hover:bg-cozyAccent transition-colors">حسناً</button>
         </div>
     </div>
 
@@ -361,16 +369,6 @@
                 <button id="confirm-delete-btn" class="flex-1 bg-red-500 text-white py-2 rounded font-bold hover:bg-red-600 transition-colors">نعم، احذف</button>
                 <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 text-gray-600 py-2 rounded font-bold hover:bg-gray-200 transition-colors">إلغاء</button>
             </div>
-        </div>
-    </div>
-    
-    <!-- Message Modal -->
-    <div id="message-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 border border-gray-200">
-            <i class="ph ph-check-circle text-4xl text-cozyAccent mb-4 block"></i>
-            <h3 class="font-bold text-lg mb-2 text-gray-800" id="message-title">تمت العملية</h3>
-            <p class="text-sm text-gray-500 mb-6" id="message-text"></p>
-            <button onclick="closeMessageModal()" class="w-full bg-cozyDark text-white py-2 rounded font-bold hover:bg-cozyAccent transition-colors">حسناً</button>
         </div>
     </div>
 
@@ -393,9 +391,15 @@
         let productsData = {};
         let deleteTargetId = null;
 
-        window.showMessage = (title, text) => {
+        window.showMessage = (title, text, isError = false) => {
             document.getElementById('message-title').innerText = title;
             document.getElementById('message-text').innerText = text;
+            const icon = document.getElementById('message-icon');
+            if (isError) {
+                icon.className = 'ph ph-warning-circle text-4xl text-red-500 mb-4 block';
+            } else {
+                icon.className = 'ph ph-check-circle text-4xl text-cozyAccent mb-4 block';
+            }
             document.getElementById('message-modal').classList.remove('hidden');
         };
         window.closeMessageModal = () => document.getElementById('message-modal').classList.add('hidden');
@@ -453,7 +457,7 @@
         });
 
         // --- Load Public Data ---
-        async function loadPublicData() {
+        function loadPublicData() {
             const container = document.getElementById('public-products-container');
             const loader = document.getElementById('public-loader');
             const urlParams = new URLSearchParams(window.location.search);
@@ -466,6 +470,8 @@
                 renderPublicProducts(loadedData, targetProductId);
                 loader.classList.add('hidden');
                 container.classList.remove('hidden');
+            }, (error) => {
+                console.error("Firebase Error: ", error);
             });
         }
 
@@ -474,8 +480,8 @@
             container.innerHTML = '';
             dataArray.forEach((product) => {
                 const isTarget = targetProductId === product.id;
-                const starRating = product.stars || 5;
-                const starsHtml = '★'.repeat(starRating) + '☆'.repeat(5 - starRating);
+                const starCount = product.stars || 5;
+                const starsHtml = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
 
                 container.innerHTML += `
                     <div id="prod-${product.id}" class="product-card ${isTarget ? 'highlight-product' : ''}">
@@ -526,13 +532,15 @@
             productsData = {};
             dataArray.forEach((p) => {
                 productsData[p.id] = p;
-                const rating = p.stars || 5;
+                const starCount = p.stars || 5;
+                const starsHtml = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+
                 list.innerHTML += `
                     <div class="flex items-center gap-4 p-4 border border-gray-100 rounded-xl hover:bg-gray-50 bg-white">
                         <img src="${p.imageUrl}" class="w-16 h-16 object-cover rounded-lg shadow-sm">
                         <div class="flex-1" dir="ltr">
                             <h4 class="font-bold text-gray-800 text-sm truncate">${p.title}</h4>
-                            <p class="text-[10px] text-cozyAccent font-bold">التقييم: ${rating} نجوم</p>
+                            <p class="text-[10px] text-cozyGold mt-1 font-bold">${starsHtml}</p>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="window.copyDirectLink('${p.id}')" class="p-2 text-gray-500 hover:text-gray-800"><i class="ph ph-link text-lg"></i></button>
@@ -551,22 +559,20 @@
             btn.disabled = true;
             btn.innerHTML = 'جاري النشر...';
             
-            const starVal = document.querySelector('input[name="rating"]:checked').value;
-            
             try {
                 await addDoc(collection(db, "products"), {
                     title: document.getElementById('add-title').value,
                     description: document.getElementById('add-desc').value,
                     imageUrl: document.getElementById('add-image').value,
                     affiliateLink: document.getElementById('add-link').value,
-                    stars: parseInt(starVal),
-                    clicks: 0,
+                    stars: parseInt(document.getElementById('add-stars').value),
                     createdAt: serverTimestamp()
                 });
                 document.getElementById('add-product-form').reset();
                 window.showMessage("تم النشر", "تم إضافة المنتج بنجاح وسيظهر للجميع.");
             } catch (err) {
-                console.error(err);
+                console.error("إيرور في الإضافة:", err);
+                window.showMessage("فشل النشر!", "قاعدة البيانات تمنع حفظ المنتج. يرجى الذهاب إلى Firebase > Firestore > Rules وتغييرها لتسمح بالكتابة (allow read, write: if true;).", true);
             }
             btn.disabled = false;
             btn.innerHTML = '<i class="ph ph-upload-simple text-lg"></i> نشر المنتج';
@@ -579,9 +585,7 @@
             document.getElementById('edit-desc').value = p.description;
             document.getElementById('edit-image').value = p.imageUrl;
             document.getElementById('edit-link').value = p.affiliateLink;
-            
-            const rating = p.stars || 5;
-            document.getElementById(`edit-star${rating}`).checked = true;
+            document.getElementById('edit-stars').value = p.stars || 5;
             
             document.getElementById('edit-modal').classList.remove('hidden');
         };
@@ -590,17 +594,28 @@
 
         document.getElementById('edit-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('edit-id').value;
-            const starVal = document.querySelector('input[name="edit-rating"]:checked').value;
+            const btn = document.getElementById('submit-edit');
+            btn.disabled = true;
+            btn.innerHTML = 'جاري الحفظ...';
             
-            await updateDoc(doc(db, "products", id), {
-                title: document.getElementById('edit-title').value,
-                description: document.getElementById('edit-desc').value,
-                imageUrl: document.getElementById('edit-image').value,
-                affiliateLink: document.getElementById('edit-link').value,
-                stars: parseInt(starVal)
-            });
-            closeEditModal();
+            try {
+                const id = document.getElementById('edit-id').value;
+                await updateDoc(doc(db, "products", id), {
+                    title: document.getElementById('edit-title').value,
+                    description: document.getElementById('edit-desc').value,
+                    imageUrl: document.getElementById('edit-image').value,
+                    affiliateLink: document.getElementById('edit-link').value,
+                    stars: parseInt(document.getElementById('edit-stars').value)
+                });
+                closeEditModal();
+                window.showMessage("تم التعديل", "تم حفظ التعديلات بنجاح.");
+            } catch (err) {
+                console.error("إيرور في التعديل:", err);
+                window.showMessage("فشل التعديل!", "قاعدة البيانات تمنع التعديل. يرجى التأكد من الـ Rules في Firebase.", true);
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = 'حفظ التغييرات';
         });
 
         window.requestDelete = (id) => {
@@ -610,20 +625,58 @@
 
         document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
             if(deleteTargetId) {
-                await deleteDoc(doc(db, "products", deleteTargetId));
-                closeDeleteModal();
+                try {
+                    await deleteDoc(doc(db, "products", deleteTargetId));
+                    closeDeleteModal();
+                } catch (err) {
+                    closeDeleteModal();
+                    window.showMessage("فشل الحذف", "لا تملك الصلاحية لحذف المنتج حالياً من Firebase.", true);
+                }
             }
         });
 
         window.copyDirectLink = (id) => {
-            const url = window.location.origin + window.location.pathname + `?p=${id}`;
-            navigator.clipboard.writeText(url).then(() => {
-                window.showMessage("تم النسخ", "رابط المنتج جاهز للوضع في بنترست.");
+            const productUrl = window.location.origin + window.location.pathname + `?p=${id}`;
+            navigator.clipboard.writeText(productUrl).then(() => {
+                window.showMessage("تم نسخ الرابط!", "يمكنك وضع هذا الرابط في بنترست الآن.");
+            }).catch(err => {
+                const input = document.createElement('input');
+                input.value = productUrl;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                window.showMessage("تم نسخ الرابط!", "يمكنك وضع هذا الرابط في بنترست الآن.");
             });
         };
 
+        // --- Newsletter Subscription ---
+        document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const emailInput = document.getElementById('newsletter-email');
+            const email = emailInput.value;
+            const btn = e.target.querySelector('button');
+            
+            btn.innerHTML = 'Wait...';
+
+            try {
+                await addDoc(collection(db, "subscribers"), {
+                    email: email,
+                    joinedAt: serverTimestamp()
+                });
+                emailInput.value = '';
+                document.getElementById('newsletter-msg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('newsletter-msg').classList.add('hidden'), 5000);
+            } catch (error) {
+                console.error("Newsletter error:", error);
+            }
+            btn.innerHTML = 'Subscribe';
+        });
+
+        // Initialize
         handleRouting();
     </script>
 </body>
 </html>
+
 
