@@ -201,7 +201,6 @@
                         </svg>
                         <span class="font-serif text-xl tracking-[0.1em] font-semibold uppercase">Cozy Home Finds</span>
                     </div>
-                    <!-- تمت إعادة الوصف الجميل هنا 👇 -->
                     <p class="text-sm text-gray-400 font-light leading-relaxed max-w-sm">
                         Curating the most beautiful, aesthetic, and functional home pieces. We spend hours finding the best-rated items on the internet so you don't have to. Transform your space into a cozy sanctuary.
                     </p>
@@ -354,8 +353,8 @@
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center p-6 border border-gray-200">
             <i id="message-icon" class="ph ph-info text-4xl text-cozyAccent mb-4 block"></i>
             <h3 class="font-bold text-lg mb-2 text-gray-800" id="message-title">تنبيه</h3>
-            <p class="text-sm text-gray-500 mb-6" id="message-text"></p>
-            <button onclick="closeMessageModal()" class="w-full bg-cozyDark text-white py-2 rounded font-bold hover:bg-cozyAccent transition-colors">حسناً</button>
+            <p class="text-sm text-gray-500 mb-6 whitespace-pre-line leading-relaxed" id="message-text"></p>
+            <button onclick="closeMessageModal()" class="w-full bg-cozyDark text-white py-2 rounded font-bold hover:bg-cozyAccent transition-colors">حسناً فهمت</button>
         </div>
     </div>
 
@@ -390,6 +389,18 @@
 
         let productsData = {};
         let deleteTargetId = null;
+        
+        // منع تراكم مستمعي البيانات
+        let publicUnsubscribe = null;
+        let adminUnsubscribe = null;
+
+        // دالة لحل مشكلة التعليق اللانهائي إذا لم يستجب فايربيس
+        const withTimeout = (promise, ms = 5000) => {
+            return Promise.race([
+                promise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error("FIREBASE_TIMEOUT")), ms))
+            ]);
+        };
 
         window.showMessage = (title, text, isError = false) => {
             document.getElementById('message-title').innerText = title;
@@ -412,6 +423,7 @@
             document.getElementById('admin-view').classList.add('hidden');
 
             if(hash === '#admin') {
+                if(publicUnsubscribe) publicUnsubscribe();
                 if(localStorage.getItem('cozyAdminAuth') === 'true') {
                     document.getElementById('admin-view').classList.remove('hidden');
                     loadAdminData();
@@ -419,6 +431,7 @@
                     document.getElementById('login-view').classList.remove('hidden');
                 }
             } else {
+                if(adminUnsubscribe) adminUnsubscribe();
                 document.getElementById('public-view').classList.remove('hidden');
                 loadPublicData();
             }
@@ -464,7 +477,7 @@
             const targetProductId = urlParams.get('p');
 
             const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
+            publicUnsubscribe = onSnapshot(q, (snapshot) => {
                 let loadedData = [];
                 snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
                 renderPublicProducts(loadedData, targetProductId);
@@ -517,7 +530,7 @@
             const list = document.getElementById('admin-products-list');
             const loader = document.getElementById('admin-loader');
             const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
+            adminUnsubscribe = onSnapshot(q, (snapshot) => {
                 let loadedData = [];
                 snapshot.forEach((docSnap) => { loadedData.push({...docSnap.data(), id: docSnap.id}); });
                 renderAdminProducts(loadedData);
@@ -557,25 +570,37 @@
             e.preventDefault();
             const btn = document.getElementById('submit-add');
             btn.disabled = true;
-            btn.innerHTML = 'جاري النشر...';
+            btn.innerHTML = 'جاري النشر... (يرجى الانتظار)';
             
             try {
-                await addDoc(collection(db, "products"), {
+                // إرسال البيانات مع مهلة 5 ثواني
+                await withTimeout(addDoc(collection(db, "products"), {
                     title: document.getElementById('add-title').value,
                     description: document.getElementById('add-desc').value,
                     imageUrl: document.getElementById('add-image').value,
                     affiliateLink: document.getElementById('add-link').value,
                     stars: parseInt(document.getElementById('add-stars').value),
                     createdAt: serverTimestamp()
-                });
+                }));
+                
                 document.getElementById('add-product-form').reset();
-                window.showMessage("تم النشر", "تم إضافة المنتج بنجاح وسيظهر للجميع.");
+                window.showMessage("تم النشر بنجاح!", "تم إضافة المنتج بنجاح وسيظهر للجميع دائماً.");
             } catch (err) {
-                console.error("إيرور في الإضافة:", err);
-                window.showMessage("فشل النشر!", "قاعدة البيانات تمنع حفظ المنتج. يرجى الذهاب إلى Firebase > Firestore > Rules وتغييرها لتسمح بالكتابة (allow read, write: if true;).", true);
+                console.error("خطأ:", err);
+                if (err.message === "FIREBASE_TIMEOUT" || err.code === "permission-denied") {
+                    window.showMessage(
+                        "مشكلة في قواعد Firebase ⚠️", 
+                        "المنتج يظهر مؤقتاً لكن لا يُحفظ في السيرفر!\n\nيجب الذهاب إلى موقع Firebase\nثم فتح (Firestore Database)\nثم فتح تبويب (Rules)\nثم تعديل السطر ليكون:\nallow read, write: if true;", 
+                        true
+                    );
+                } else {
+                    window.showMessage("حدث خطأ غير متوقع", err.message, true);
+                }
+            } finally {
+                // إعادة الزر لشكله الطبيعي في جميع الحالات
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph ph-upload-simple text-lg"></i> نشر المنتج';
             }
-            btn.disabled = false;
-            btn.innerHTML = '<i class="ph ph-upload-simple text-lg"></i> نشر المنتج';
         });
 
         window.openEditModal = (id) => {
@@ -600,22 +625,21 @@
             
             try {
                 const id = document.getElementById('edit-id').value;
-                await updateDoc(doc(db, "products", id), {
+                await withTimeout(updateDoc(doc(db, "products", id), {
                     title: document.getElementById('edit-title').value,
                     description: document.getElementById('edit-desc').value,
                     imageUrl: document.getElementById('edit-image').value,
                     affiliateLink: document.getElementById('edit-link').value,
                     stars: parseInt(document.getElementById('edit-stars').value)
-                });
+                }));
                 closeEditModal();
                 window.showMessage("تم التعديل", "تم حفظ التعديلات بنجاح.");
             } catch (err) {
-                console.error("إيرور في التعديل:", err);
-                window.showMessage("فشل التعديل!", "قاعدة البيانات تمنع التعديل. يرجى التأكد من الـ Rules في Firebase.", true);
+                window.showMessage("فشل التعديل!", "يرجى تعديل قواعد Rules في فايربيس أولاً لكي يسمح لك بتعديل البيانات.", true);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'حفظ التغييرات';
             }
-            
-            btn.disabled = false;
-            btn.innerHTML = 'حفظ التغييرات';
         });
 
         window.requestDelete = (id) => {
@@ -624,15 +648,21 @@
         };
 
         document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('confirm-delete-btn');
+            btn.disabled = true;
+            btn.innerHTML = 'جاري الحذف...';
+            
             if(deleteTargetId) {
                 try {
-                    await deleteDoc(doc(db, "products", deleteTargetId));
+                    await withTimeout(deleteDoc(doc(db, "products", deleteTargetId)));
                     closeDeleteModal();
                 } catch (err) {
                     closeDeleteModal();
-                    window.showMessage("فشل الحذف", "لا تملك الصلاحية لحذف المنتج حالياً من Firebase.", true);
+                    window.showMessage("فشل الحذف", "يرجى تعديل قواعد Rules في فايربيس أولاً لكي يسمح لك بحذف البيانات.", true);
                 }
             }
+            btn.disabled = false;
+            btn.innerHTML = 'نعم، احذف';
         });
 
         window.copyDirectLink = (id) => {
@@ -660,10 +690,10 @@
             btn.innerHTML = 'Wait...';
 
             try {
-                await addDoc(collection(db, "subscribers"), {
+                await withTimeout(addDoc(collection(db, "subscribers"), {
                     email: email,
                     joinedAt: serverTimestamp()
-                });
+                }));
                 emailInput.value = '';
                 document.getElementById('newsletter-msg').classList.remove('hidden');
                 setTimeout(() => document.getElementById('newsletter-msg').classList.add('hidden'), 5000);
